@@ -1,0 +1,83 @@
+#Loading dplyr package
+library("dplyr")
+
+Analysis<-function()
+{
+  
+#readActivityLabels
+lb<-read.csv("UCI HAR Dataset/activity_labels.txt",sep="",header=FALSE,stringsAsFactors = FALSE)
+trainlb<-read.csv("UCI HAR Dataset/train/Y_train.txt",sep="",header=FALSE,stringsAsFactors = FALSE)
+testlb<-read.csv("UCI HAR Dataset/test/Y_test.txt",sep="",header=FALSE,stringsAsFactors = FALSE)
+
+#merging Id's of Labels
+
+trainlb$V1<-lb[trainlb$V1,2]
+testlb$V1<-lb[testlb$V1,2]
+
+#merge train and test lables
+
+lball <- rbind(trainlb,testlb)
+names(lball)<-"activity"
+lball[,"activity"]<-as.factor(lball[,"activity"])
+
+
+# read subject Id's
+
+trainsubjectID <- read.csv("UCI HAR Dataset/train/subject_train.txt",sep="",header=FALSE,stringsAsFactors = FALSE)
+testsubjectID <- read.csv("UCI HAR Dataset/test/subject_test.txt",sep="",header=FALSE,stringsAsFactors = FALSE)
+
+#merge training and testing subjects in 1 data frame
+subjectAll<-rbind(trainsubjectID,testsubjectID)
+#give name to header
+names(subjectAll)<-"subject"
+
+# read feature labels
+headersDf <- read.csv("UCI HAR Dataset/features.txt",header = FALSE,stringsAsFactors = FALSE,sep="")
+headers <- c(headersDf[, 2]) #extracting only names
+
+#read train and test files
+traindf<-read.csv("UCI HAR Dataset/train/X_train.txt",sep="",header=FALSE,stringsAsFactors = FALSE)
+testdf<-read.csv("UCI HAR Dataset/test/X_test.txt",sep="",header=FALSE,stringsAsFactors = FALSE)
+
+#merging training and testing data and adding feature labels as headers
+merge1<-rbind(traindf,testdf)
+names(merge1)<-headers
+
+# Extracts mean and standard deviation columns
+merge1<-merge1[,grep("(mean\\(\\)|std\\(\\))", names(merge1))]
+
+#merging subject with merge1
+merge1<-cbind(merge1,subjectAll)
+
+#merging result with activity column
+mergeAll<- cbind(merge1,select(lball, activity))
+
+#Renaming columns with tidy names
+names(mergeAll) <- RenameColumns(names(mergeAll))
+
+tidyData<-mergeAll %>% group_by(subject,activity) %>% summarize_each(funs(mean))
+#Viewing Tidy  Data in table form
+View(tidyData)
+write.table(format(tidyData, scientific=T), 
+            file = "tidy.txt", 
+            row.name=FALSE)
+tidyData
+}
+#Run the script using source("run_analysis.R") and then call Analysis()
+
+RenameColumns <- function(name) {
+  newName <- gsub("^t", "time", name)
+  newName <- gsub("^f", "fequency", newName)
+  newName <- gsub("([A]|[B]|[G]|[J]|[M])", "\\.\\1", newName)
+  newName <- gsub("Acc", "Accelerometer", newName)
+  newName <- gsub("Gyro", "Gyroscope", newName)
+  newName <- gsub("Mag", "Magnitude", newName)
+  newName <- gsub("\\-", "\\.", newName)
+  newName <- gsub("\\(\\)", "", newName)
+  tolower(newName)
+}
+
+
+
+
+
