@@ -1,6 +1,6 @@
 # CodeBook for Human Activity Recognition Using Smartphones Dataset
 
-The original "Human Activity Recognition Using Smartphones Dataset" was used as a base for transformations.
+The original "Human Activity Recognition Using Smartphones Dataset from UCI HAR Dataset" was used as a base for transformations.
 
 ## The original dataset description
 
