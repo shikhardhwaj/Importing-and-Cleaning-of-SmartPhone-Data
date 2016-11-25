@@ -11,7 +11,7 @@ This work is based on the "Human Activity Recognition Using Smartphones Dataset"
 
 The project contains the following files:
 
-* `./datasets/UCI HAR Dataset`: Human Activity Recognition Using Smartphones Dataset Version 1.0.
+* `UCI HAR Dataset`: Human Activity Recognition Using Smartphones Dataset Version 1.0.
 * `README.md`: description of the steps for perfoming the dataset analysis. 
 * `CodeBook.md`: indicate all the variables and summaries calculated, along with units, and any other relevant information.
 * `run_analysis.R`: R scripts performing the analysis on the dataset.
